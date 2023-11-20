@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using XmcSearchPublishing.SearchIndexUpdate.Edge;
 
 namespace FunctionApp
 {
@@ -15,16 +14,7 @@ namespace FunctionApp
                 .ConfigureServices(s =>
                 {
                     s.AddApplicationInsightsTelemetryWorkerService();
-                    s.Configure<LoggerFilterOptions>(options =>
-                    {
-                        LoggerFilterRule toRemove = options.Rules.FirstOrDefault(rule => rule.ProviderName
-                            == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
-
-                        if (toRemove is not null)
-                        {
-                            options.Rules.Remove(toRemove);
-                        }
-                    });
+                    s.AddSingleton<IEdgeDataRetriever, EdgeDataRetriever>();
                 })
                 .Build();
 
